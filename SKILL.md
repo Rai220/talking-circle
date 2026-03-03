@@ -69,7 +69,68 @@ You need 4 PNG images of your avatar, all the same resolution (recommended 2048x
 | `wide` | Mouth wide open, eyes open |
 | `blink` | Mouth closed, eyes closed |
 
-See `examples/frames/README.md` for detailed preparation instructions.
+### Critical rules
+
+- All 4 frames must have **identical** resolution, art style, colors, and character positioning.
+- Only the mouth and eyes should change between frames — head, body, background must stay the same.
+- Do not mix frames from different generation sessions or different styles.
+
+## Generating Frames with Image AI
+
+If the user does not have ready-made frames, generate them using an image generation API (DALL-E, Midjourney, Flux, etc.). Follow this workflow:
+
+### Step 1: Generate the neutral frame
+
+Generate a shoulder-up portrait of the character. This is the base frame — all other frames must match it exactly.
+
+Example prompt:
+```
+Shoulder-up portrait of [CHARACTER DESCRIPTION]. Square composition, clean background,
+mouth closed, eyes open, looking at camera. High detail, consistent lighting.
+```
+
+### Step 2: Generate remaining 3 frames as edits of neutral
+
+Use image editing / inpainting on the neutral frame to produce the other states.
+Only modify the mouth and eyes region — everything else must remain pixel-identical.
+
+| Frame | What to change | Edit prompt example |
+|-------|---------------|-------------------|
+| `slight` | Mouth slightly open | `"Mouth slightly open, teeth barely visible, same expression"` |
+| `wide` | Mouth wide open | `"Mouth wide open as if saying 'ah', same expression"` |
+| `blink` | Eyes closed | `"Eyes gently closed, mouth closed, same expression"` |
+
+### Step 3: Verify consistency
+
+Before using the frames:
+1. Check that all 4 images have the same resolution.
+2. Overlay them to verify the head/body position hasn't shifted.
+3. If any frame drifts, regenerate it from the neutral base.
+
+### Examples
+
+See `examples/` for reference images and ready-to-use frame sets:
+
+- **Rizzi** — anime-style girl, complete frame set included:
+  - `examples/rizzi/reference.png` — character reference
+  - `examples/rizzi/neutral.png` — mouth closed, eyes open
+  - `examples/rizzi/slight.png` — mouth slightly open
+  - `examples/rizzi/wide.png` — mouth wide open
+  - `examples/rizzi/blink.png` — eyes closed
+  - `examples/rizzi/example.mp4` — finished talking-circle video
+- **Sbercat** (`examples/sbercat/reference.png`) — 3D-rendered anthropomorphic cat, reference only
+
+To test with the included Rizzi frames:
+
+```bash
+python3 scripts/make_talking_circle_video.py \
+  --neutral examples/rizzi/neutral.png \
+  --slight examples/rizzi/slight.png \
+  --wide examples/rizzi/wide.png \
+  --blink examples/rizzi/blink.png \
+  --audio your-audio.mp3 \
+  --out /tmp/talking-circle.mp4
+```
 
 ## Parameters Reference
 

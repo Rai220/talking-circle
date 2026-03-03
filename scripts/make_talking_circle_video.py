@@ -10,7 +10,9 @@ from PIL import Image, ImageDraw
 
 
 def run(cmd):
-    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"Command failed: {' '.join(str(c) for c in cmd)}\n{result.stderr}")
 
 
 def prep_circle_frame(path: Path, size: int, diameter: int, bg=(242, 242, 242)) -> Image.Image:

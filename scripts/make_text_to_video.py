@@ -9,7 +9,10 @@ import requests
 
 
 def run(cmd):
-    return subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"Command failed: {' '.join(str(c) for c in cmd)}\n{result.stderr}")
+    return result
 
 
 def ensure_runtime_python() -> str:
@@ -94,9 +97,16 @@ def main():
     p.add_argument("--use-speaker-boost", action="store_true")
     p.add_argument("--speed", type=float, default=1.00)
 
+    p.add_argument("--size", type=int, default=720)
+    p.add_argument("--diameter", type=int, default=640)
+    p.add_argument("--fps", type=int, default=30)
+
     p.add_argument("--blink-start", type=float, default=1.1)
     p.add_argument("--blink-every", type=float, default=3.8)
     p.add_argument("--blink-duration-frames", type=int, default=4)
+
+    p.add_argument("--amp-low", type=int, default=1200)
+    p.add_argument("--amp-high", type=int, default=2600)
 
     p.add_argument("--allow-static-fallback", action="store_true", help="Use static video fallback if animation build fails")
     args = p.parse_args()
@@ -165,9 +175,19 @@ def main():
             str(args.blink_every),
             "--blink-duration-frames",
             str(args.blink_duration_frames),
+            "--size",
+            str(args.size),
+            "--diameter",
+            str(args.diameter),
+            "--fps",
+            str(args.fps),
+            "--amp-low",
+            str(args.amp_low),
+            "--amp-high",
+            str(args.amp_high),
         ]
 
-        result = run(cmd)
+        result = subprocess.run(cmd, capture_output=True, text=True)
         log_path.write_text(
             f"RC={result.returncode}\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}\n"
         )
@@ -177,7 +197,7 @@ def main():
                 build_static_circle_video(neutral, audio, out)
             else:
                 raise SystemExit(
-                    "Animated video build failed. See build log: " + str(log_path)
+                    f"Animated video build failed.\n{result.stderr}\nSee build log: {log_path}"
                 )
 
     if not out.exists() or out.stat().st_size == 0:
