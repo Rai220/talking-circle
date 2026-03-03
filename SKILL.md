@@ -118,7 +118,10 @@ See `examples/` for reference images and ready-to-use frame sets:
   - `examples/rizzi/wide.png` — mouth wide open
   - `examples/rizzi/blink.png` — eyes closed
   - `examples/rizzi/example.mp4` — finished talking-circle video
-- **Sbercat** (`examples/sbercat/reference.png`) — 3D-rendered anthropomorphic cat, reference only
+- **Sbercat** — 3D-rendered anthropomorphic cat, lavender-blue fur, green eyes, pink nose, green hoodie:
+  - `examples/sbercat/reference.png` — character reference
+  - `examples/sbercat/example.mp4` — finished talking-circle video
+  - Frame set not included — generate from reference using the workflow above
 
 To test with the included Rizzi frames:
 

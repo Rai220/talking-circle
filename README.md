@@ -10,9 +10,9 @@ An [OpenClaw](https://github.com/nicekrestnikov/openclaw) skill for creating ani
 
 Send this message to your OpenClaw assistant in Telegram:
 
-> Установи скилл talking-circle для генерации видео-кружочков.
-> Репозиторий: https://github.com/nicekrestnikov/talking-circle
-> После установки сгенерируй опорные кадры для моего аватара и отправь мне тестовый кружочек со словами "Привет, это мой первый кружочек!"
+> Install the talking-circle skill for generating video circles.
+> Repository: https://github.com/nicekrestnikov/talking-circle
+> After installation, generate frame images for my avatar and send me a test circle saying "Hello, this is my first talking circle!"
 
 The assistant will:
 1. Clone the skill repository.
@@ -134,11 +134,15 @@ Anime-style AI assistant character.
 
 ### Sbercat
 
-3D-rendered anthropomorphic cat character.
+3D-rendered anthropomorphic cat character — lavender-blue fur, green eyes, pink nose, green hoodie.
+
+**Reference and output:**
 
 | Reference | Output |
 |-----------|--------|
 | <img src="examples/sbercat/reference.png" width="200"> | [example.mp4](examples/sbercat/example.mp4) |
+
+**Frame set:** not included — generate from reference using the [Image AI workflow](#generating-frames-with-image-ai).
 
 ## Parameters
 
