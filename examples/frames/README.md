@@ -51,4 +51,4 @@ If you don't have hand-drawn frames, use an image generation API (DALL-E, Midjou
 - Use clean, high-contrast artwork for best results at small circle sizes
 - If using AI-generated art, generate all 4 frames via inpainting from the same base image
 - Test with a short audio clip first to verify the frames look natural in motion
-- See `examples/rizzi/` and `examples/sbercat/` for reference character images
+- See `examples/sbercat/` for a reference character with all 4 frame images

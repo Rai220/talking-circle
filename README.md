@@ -1,9 +1,9 @@
 # talking-circle
 
-An [OpenClaw](https://github.com/nicekrestnikov/openclaw) skill for creating animated talking-circle videos (Telegram-style round video messages) from avatar frame images and audio.
+An [OpenClaw](https://github.com/Rai220/openclaw) skill for creating animated talking-circle videos (Telegram-style round video messages) from avatar frame images and audio.
 
 <p align="center">
-  <img src="examples/demo.gif" alt="Rizzi and Sbercat talking circles" width="480">
+  <img src="examples/demo.gif" alt="Sbercat talking circle demo" width="480">
 </p>
 
 ## Quick Start
@@ -11,7 +11,7 @@ An [OpenClaw](https://github.com/nicekrestnikov/openclaw) skill for creating ani
 Send this message to your OpenClaw assistant in Telegram:
 
 > Install the talking-circle skill for generating video circles.
-> Repository: https://github.com/nicekrestnikov/talking-circle
+> Repository: https://github.com/Rai220/talking-circle
 > After installation, generate frame images for my avatar and send me a test circle saying "Hello, this is my first talking circle!"
 
 The assistant will:
@@ -23,7 +23,7 @@ The assistant will:
 ### Manual installation
 
 ```bash
-git clone https://github.com/nicekrestnikov/talking-circle.git ~/.claude/skills/talking-circle
+git clone https://github.com/Rai220/talking-circle.git ~/.claude/skills/talking-circle
 ```
 
 ### Prerequisites
@@ -114,25 +114,7 @@ If you don't have ready-made frames, generate them using an image generation API
 
 See [`examples/frames/README.md`](examples/frames/README.md) for detailed instructions.
 
-## Examples
-
-### Rizzi
-
-Anime-style AI assistant character.
-
-**Reference and output:**
-
-| Reference | Output |
-|-----------|--------|
-| <img src="examples/rizzi/reference.png" width="200"> | [example.mp4](examples/rizzi/example.mp4) |
-
-**Frame set:**
-
-| Neutral | Slight open | Wide open | Blink |
-|---------|-------------|-----------|-------|
-| <img src="examples/rizzi/neutral.png" width="150"> | <img src="examples/rizzi/slight.png" width="150"> | <img src="examples/rizzi/wide.png" width="150"> | <img src="examples/rizzi/blink.png" width="150"> |
-
-### Sbercat
+## Example: Sbercat
 
 3D-rendered anthropomorphic cat character — lavender-blue fur, green eyes, pink nose, green hoodie.
 
@@ -147,6 +129,21 @@ Anime-style AI assistant character.
 | Neutral | Slight open | Wide open | Blink |
 |---------|-------------|-----------|-------|
 | <img src="examples/sbercat/neutral.png" width="150"> | <img src="examples/sbercat/slight.png" width="150"> | <img src="examples/sbercat/wide.png" width="150"> | <img src="examples/sbercat/blink.png" width="150"> |
+
+## Voice & TTS
+
+The text-to-video mode uses [ElevenLabs](https://elevenlabs.io) by default. Ready-to-use voice preset for Sbercat:
+
+| Parameter | Value |
+|-----------|-------|
+| `--voice-id` | `pNInz6obpgDQGcFmaJgB` |
+| `--model-id` | `eleven_multilingual_v2` |
+| `--stability` | `0.15` |
+| `--similarity-boost` | `0.70` |
+| `--style` | `0.38` |
+| `--speed` | `1.20` |
+
+**Don't have an ElevenLabs key?** Use any other TTS engine — OpenAI TTS, Whisper, Coqui, Piper, Silero, Google TTS, Amazon Polly — generate an audio file and pass it to the audio-to-video mode (`--audio`). No API key needed.
 
 ## Parameters
 

@@ -5,8 +5,10 @@ description: >
   from avatar frame images and audio. Supports audio-to-video and text-to-video
   via ElevenLabs TTS. Use when the user wants to generate lip-synced circular
   avatar animations, talking circles, or round video messages.
+version: 1.0.0
 user-invocable: true
 argument-hint: "[text or audio path]"
+metadata: {"openclaw":{"emoji":"🎙️","primaryEnv":"ELEVENLABS_API_KEY","requires":{"bins":["python3","ffmpeg"],"env":[]},"os":["darwin","linux"]}}
 ---
 
 # Talking Circle
@@ -50,13 +52,59 @@ Requires `ELEVENLABS_API_KEY` set in environment or passed via `--api-key`.
 ```bash
 python3 scripts/make_text_to_video.py \
   --text "Hello, this is a talking circle demo!" \
-  --voice-id YOUR_VOICE_ID \
+  --voice-id pNInz6obpgDQGcFmaJgB \
   --neutral frames/neutral.png \
   --slight frames/mouth-slight-open.png \
   --wide frames/mouth-wide-open.png \
   --blink frames/eyes-closed.png \
   --out /tmp/talking-circle.mp4
 ```
+
+## Voice Presets
+
+The skill uses ElevenLabs TTS by default. Below are ready-to-use voice presets.
+
+### Default voice preset (Sbercat — male)
+
+| Parameter | Value |
+|-----------|-------|
+| `--voice-id` | `pNInz6obpgDQGcFmaJgB` |
+| `--model-id` | `eleven_multilingual_v2` |
+| `--stability` | `0.15` |
+| `--similarity-boost` | `0.70` |
+| `--style` | `0.38` |
+| `--speed` | `1.20` |
+
+This is the preset for the included Sbercat example character. Use it as a starting point for testing.
+
+### How to find your own voice ID
+
+1. Go to [ElevenLabs Voice Library](https://elevenlabs.io/voice-library).
+2. Pick or clone a voice.
+3. Copy the voice ID from the voice settings page.
+
+### Alternative TTS engines
+
+ElevenLabs is the default, but the skill supports **any TTS** that can produce an audio file. Use Mode 1 (audio-to-video) with audio from any source:
+
+- **OpenAI TTS** (`openai.audio.speech.create`) — generate speech, save to MP3, pass via `--audio`
+- **Whisper / other local TTS** (Coqui, Piper, Silero, etc.) — run locally, save WAV/MP3, pass via `--audio`
+- **Google Cloud TTS**, **Amazon Polly**, **Azure TTS** — any cloud provider works
+
+The text-to-video script (`make_text_to_video.py`) is a convenience wrapper around ElevenLabs. For other TTS engines, generate the audio file separately and then use Mode 1:
+
+```bash
+# Example: generate audio with any TTS, then animate
+python3 scripts/make_talking_circle_video.py \
+  --neutral frames/neutral.png \
+  --slight frames/mouth-slight-open.png \
+  --wide frames/mouth-wide-open.png \
+  --blink frames/eyes-closed.png \
+  --audio /path/to/speech-from-any-tts.mp3 \
+  --out /tmp/talking-circle.mp4
+```
+
+**Tell the user:** if they don't have an ElevenLabs API key, they can use any other TTS engine — just generate the audio file and pass it to Mode 1. No API key needed for audio-to-video mode.
 
 ## Frame Image Requirements
 
@@ -109,15 +157,8 @@ Before using the frames:
 
 ### Examples
 
-See `examples/` for reference images and ready-to-use frame sets:
+See `examples/sbercat/` for a reference character with ready-to-use frame set:
 
-- **Rizzi** — anime-style girl, complete frame set included:
-  - `examples/rizzi/reference.png` — character reference
-  - `examples/rizzi/neutral.png` — mouth closed, eyes open
-  - `examples/rizzi/slight.png` — mouth slightly open
-  - `examples/rizzi/wide.png` — mouth wide open
-  - `examples/rizzi/blink.png` — eyes closed
-  - `examples/rizzi/example.mp4` — finished talking-circle video
 - **Sbercat** — 3D-rendered anthropomorphic cat, lavender-blue fur, green eyes, pink nose, green hoodie:
   - `examples/sbercat/reference.png` — character reference
   - `examples/sbercat/neutral.png` — mouth closed, eyes open
@@ -126,17 +167,63 @@ See `examples/` for reference images and ready-to-use frame sets:
   - `examples/sbercat/blink.png` — eyes closed
   - `examples/sbercat/example.mp4` — finished talking-circle video
 
-To test with the included Rizzi frames:
+To test with the included Sbercat frames:
 
 ```bash
 python3 scripts/make_talking_circle_video.py \
-  --neutral examples/rizzi/neutral.png \
-  --slight examples/rizzi/slight.png \
-  --wide examples/rizzi/wide.png \
-  --blink examples/rizzi/blink.png \
+  --neutral examples/sbercat/neutral.png \
+  --slight examples/sbercat/slight.png \
+  --wide examples/sbercat/wide.png \
+  --blink examples/sbercat/blink.png \
   --audio your-audio.mp3 \
   --out /tmp/talking-circle.mp4
 ```
+
+## Post-installation message
+
+After installing this skill, inform the user:
+
+> **Skill "talking-circle" installed.**
+>
+> To create talking-circle videos, I need a character avatar. Please send me a **reference image of your character on a white/clean background** — a shoulder-up portrait works best (square aspect ratio, high resolution).
+>
+> From this reference I will generate 4 frame images (mouth states + blink) and you'll be ready to create animated video circles.
+>
+> For speech, I can use **ElevenLabs TTS** (requires `ELEVENLABS_API_KEY`) or you can provide your own audio file. Any TTS engine works — OpenAI TTS, Whisper, Coqui, Piper, Google TTS, etc.
+
+## First use: generating frame images
+
+**IMPORTANT — before the skill can create videos, the 4 frame images must exist.** If the user does not already have frames, you MUST generate them first.
+
+### Workflow for the assistant
+
+1. **Ask the user for a reference image** of their character (or use a character description). The image should be a shoulder-up portrait on a white or clean background, square aspect ratio.
+2. **Generate the neutral frame** using image generation (DALL-E, Flux, Midjourney, etc.):
+   - Prompt: `"Shoulder-up portrait of [CHARACTER], white background, mouth closed, eyes open, looking at camera, square composition, high detail"`
+   - Save as `neutral.png`.
+3. **Generate the 3 remaining frames via inpainting/editing** of the neutral frame. Only modify the mouth/eyes region — everything else must remain pixel-identical:
+   - `slight.png` — edit mouth region: `"Mouth slightly open, teeth barely visible"`
+   - `wide.png` — edit mouth region: `"Mouth wide open as if saying 'ah'"`
+   - `blink.png` — edit eyes region: `"Eyes gently closed, mouth closed"`
+4. **Verify consistency**: all 4 images must have the same resolution, identical head/body position, and only differ in mouth/eyes.
+5. **Save the frames** to a persistent location (e.g. the skill's working directory or a user-specified path). These frames are reused for every future video.
+6. **Confirm to the user** that frames are ready and the skill is operational.
+
+**Do not skip this step.** Without the 4 frame images, the video scripts will fail.
+
+## Guardrails
+
+- Before running any script, verify that `python3` (3.9+) and `ffmpeg` are on PATH. If missing, instruct the user to install them.
+- Never delete or overwrite the user's original frame images.
+- Do not use this skill for full-motion video editing, face tracking, or real-time lipsync — it only works with 4 static frame images.
+- If ElevenLabs API returns an error (401, 429, etc.), explain the error clearly to the user instead of retrying silently.
+
+## Failure handling
+
+- If `ffmpeg` is not found: tell the user to install it (`brew install ffmpeg` on macOS, `apt install ffmpeg` on Linux).
+- If `ELEVENLABS_API_KEY` is missing and the user wants text-to-video: suggest using Mode 1 with audio from another TTS, or ask the user to set the key.
+- If frame images have different resolutions: warn the user and ask them to fix the frames before proceeding.
+- If the output video is empty or zero bytes: show the ffmpeg error log and suggest checking input files.
 
 ## Parameters Reference
 
