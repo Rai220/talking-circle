@@ -3,8 +3,8 @@ name: talking-circle
 description: >
   Create animated talking-circle videos (Telegram-style round video messages)
   from avatar frame images and audio. Supports audio-to-video and text-to-video
-  via ElevenLabs TTS. Use when the user wants to generate lip-synced circular
-  avatar animations, talking circles, or round video messages.
+  via ElevenLabs or SaluteSpeech (Sber) TTS. Use when the user wants to generate
+  lip-synced circular avatar animations, talking circles, or round video messages.
 version: 1.0.0
 user-invocable: true
 argument-hint: "[text or audio path]"
@@ -19,7 +19,8 @@ Create animated circular avatar videos with lip-sync and blink animations. Takes
 
 - `python3` (3.9+)
 - `ffmpeg` installed and on PATH
-- Optional: `ELEVENLABS_API_KEY` environment variable (for text-to-video mode)
+- Optional: `ELEVENLABS_API_KEY` environment variable (for ElevenLabs text-to-video mode)
+- Optional: `SALUTE_SPEECH_AUTH` environment variable (for SaluteSpeech text-to-video mode)
 
 ## Setup
 
@@ -60,11 +61,38 @@ python3 scripts/make_text_to_video.py \
   --out /tmp/talking-circle.mp4
 ```
 
+## Mode 3: Text to Video via SaluteSpeech (Sber)
+
+Generate speech from text via SaluteSpeech TTS (Sber), then create the animated video.
+
+Requires `SALUTE_SPEECH_AUTH` set in environment or passed via `--auth-key`. This is a Base64-encoded `client_id:client_secret` from your [SaluteSpeech project](https://developers.sber.ru/portal/products/smartspeech).
+
+```bash
+python3 scripts/make_salute_text_to_video.py \
+  --text "Привет, это демонстрация talking circle!" \
+  --voice Bys_24000 \
+  --neutral frames/neutral.png \
+  --slight frames/mouth-slight-open.png \
+  --wide frames/mouth-wide-open.png \
+  --blink frames/eyes-closed.png \
+  --out /tmp/talking-circle.mp4
+```
+
+### SaluteSpeech voices
+
+| Voice | Name | Language |
+|-------|------|----------|
+| `Nec_24000` | Natalia (female) | ru-RU |
+| `Bys_24000` | Boris (male) | ru-RU |
+| `May_24000` | Martha (female) | ru-RU |
+| `Tur_24000` | Taras (male) | ru-RU |
+| `Ost_24000` | Alexandra (female) | ru-RU |
+| `Pon_24000` | Sergey (male) | ru-RU |
+| `Kin_24000` | Kira (female) | en-US |
+
 ## Voice Presets
 
-The skill uses ElevenLabs TTS by default. Below are ready-to-use voice presets.
-
-### Default voice preset (Sbercat — male)
+### ElevenLabs preset (Sbercat — male)
 
 | Parameter | Value |
 |-----------|-------|
@@ -75,23 +103,34 @@ The skill uses ElevenLabs TTS by default. Below are ready-to-use voice presets.
 | `--style` | `0.38` |
 | `--speed` | `1.20` |
 
-This is the preset for the included Sbercat example character. Use it as a starting point for testing.
+### SaluteSpeech preset (Boris — male, Russian)
 
-### How to find your own voice ID
+| Parameter | Value |
+|-----------|-------|
+| `--voice` | `Bys_24000` |
+| `--audio-format` | `wav16` |
+| `--scope` | `SALUTE_SPEECH_PERS` |
 
+### How to get API keys
+
+**ElevenLabs:**
 1. Go to [ElevenLabs Voice Library](https://elevenlabs.io/voice-library).
-2. Pick or clone a voice.
-3. Copy the voice ID from the voice settings page.
+2. Pick or clone a voice, copy the voice ID.
+3. Set `ELEVENLABS_API_KEY` environment variable.
+
+**SaluteSpeech (Sber):**
+1. Register at [developers.sber.ru](https://developers.sber.ru/portal/products/smartspeech).
+2. Create a project, get `client_id` and `client_secret`.
+3. Encode `client_id:client_secret` in Base64.
+4. Set `SALUTE_SPEECH_AUTH` environment variable with the Base64 string.
 
 ### Alternative TTS engines
 
-ElevenLabs is the default, but the skill supports **any TTS** that can produce an audio file. Use Mode 1 (audio-to-video) with audio from any source:
+The skill also supports **any TTS** that can produce an audio file. Use Mode 1 (audio-to-video) with audio from any source:
 
 - **OpenAI TTS** (`openai.audio.speech.create`) — generate speech, save to MP3, pass via `--audio`
-- **Whisper / other local TTS** (Coqui, Piper, Silero, etc.) — run locally, save WAV/MP3, pass via `--audio`
+- **Local TTS** (Coqui, Piper, Silero, etc.) — run locally, save WAV/MP3, pass via `--audio`
 - **Google Cloud TTS**, **Amazon Polly**, **Azure TTS** — any cloud provider works
-
-The text-to-video script (`make_text_to_video.py`) is a convenience wrapper around ElevenLabs. For other TTS engines, generate the audio file separately and then use Mode 1:
 
 ```bash
 # Example: generate audio with any TTS, then animate
@@ -104,7 +143,7 @@ python3 scripts/make_talking_circle_video.py \
   --out /tmp/talking-circle.mp4
 ```
 
-**Tell the user:** if they don't have an ElevenLabs API key, they can use any other TTS engine — just generate the audio file and pass it to Mode 1. No API key needed for audio-to-video mode.
+**Tell the user:** if they don't have an ElevenLabs or SaluteSpeech API key, they can use any other TTS engine — just generate the audio file and pass it to Mode 1. No API key needed for audio-to-video mode.
 
 ## Frame Image Requirements
 
@@ -189,7 +228,7 @@ After installing this skill, inform the user:
 >
 > From this reference I will generate 4 frame images (mouth states + blink) and you'll be ready to create animated video circles.
 >
-> For speech, I can use **ElevenLabs TTS** (requires `ELEVENLABS_API_KEY`) or you can provide your own audio file. Any TTS engine works — OpenAI TTS, Whisper, Coqui, Piper, Google TTS, etc.
+> For speech, I can use **ElevenLabs TTS** (requires `ELEVENLABS_API_KEY`), **SaluteSpeech** from Sber (requires `SALUTE_SPEECH_AUTH`), or you can provide your own audio file. Any TTS engine works — OpenAI TTS, Whisper, Coqui, Piper, Google TTS, etc.
 
 ## First use: generating frame images
 
@@ -216,12 +255,13 @@ After installing this skill, inform the user:
 - Before running any script, verify that `python3` (3.9+) and `ffmpeg` are on PATH. If missing, instruct the user to install them.
 - Never delete or overwrite the user's original frame images.
 - Do not use this skill for full-motion video editing, face tracking, or real-time lipsync — it only works with 4 static frame images.
-- If ElevenLabs API returns an error (401, 429, etc.), explain the error clearly to the user instead of retrying silently.
+- If ElevenLabs or SaluteSpeech API returns an error (401, 429, etc.), explain the error clearly to the user instead of retrying silently.
 
 ## Failure handling
 
 - If `ffmpeg` is not found: tell the user to install it (`brew install ffmpeg` on macOS, `apt install ffmpeg` on Linux).
-- If `ELEVENLABS_API_KEY` is missing and the user wants text-to-video: suggest using Mode 1 with audio from another TTS, or ask the user to set the key.
+- If `ELEVENLABS_API_KEY` is missing and the user wants text-to-video: suggest SaluteSpeech (Mode 3) or Mode 1 with audio from another TTS.
+- If `SALUTE_SPEECH_AUTH` is missing and the user wants SaluteSpeech: explain how to register at developers.sber.ru and get credentials.
 - If frame images have different resolutions: warn the user and ask them to fix the frames before proceeding.
 - If the output video is empty or zero bytes: show the ffmpeg error log and suggest checking input files.
 
@@ -247,7 +287,7 @@ After installing this skill, inform the user:
 | `--amp-low` | 1200 | RMS below this = neutral (closed mouth) |
 | `--amp-high` | 2600 | RMS above this = wide open mouth |
 
-### TTS voice settings (text-to-video)
+### ElevenLabs TTS settings (make_text_to_video.py)
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `--voice-id` | (required) | ElevenLabs voice ID |
@@ -256,3 +296,11 @@ After installing this skill, inform the user:
 | `--similarity-boost` | 0.75 | Voice similarity boost |
 | `--style` | 0.00 | Style exaggeration |
 | `--speed` | 1.00 | Speech speed |
+
+### SaluteSpeech TTS settings (make_salute_text_to_video.py)
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `--voice` | Bys_24000 | SaluteSpeech voice (see voices table above) |
+| `--audio-format` | wav16 | Audio format: opus, wav16, pcm16 |
+| `--scope` | SALUTE_SPEECH_PERS | OAuth scope (PERS for personal, CORP for corporate) |
+| `--auth-key` | `$SALUTE_SPEECH_AUTH` | Base64-encoded client_id:client_secret |

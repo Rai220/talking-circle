@@ -17,7 +17,7 @@ Send this message to your OpenClaw assistant in Telegram:
 The assistant will:
 1. Clone the skill repository.
 2. Generate 4 frame images for your character (neutral, slight open, wide open, blink) using image AI.
-3. Synthesize speech via ElevenLabs TTS.
+3. Synthesize speech via ElevenLabs or SaluteSpeech (Sber) TTS.
 4. Render an animated talking-circle video and send it back.
 
 ### Manual installation
@@ -30,7 +30,8 @@ git clone https://github.com/Rai220/talking-circle.git ~/.claude/skills/talking-
 
 - Python 3.9+
 - ffmpeg installed and on PATH
-- Optional: [ElevenLabs](https://elevenlabs.io) API key (for text-to-video mode)
+- Optional: [ElevenLabs](https://elevenlabs.io) API key (for ElevenLabs text-to-video)
+- Optional: [SaluteSpeech](https://developers.sber.ru/portal/products/smartspeech) credentials (for Sber text-to-video)
 
 Dependencies (`numpy`, `pillow`, `requests`) are auto-installed into a temporary venv on first run, or install manually:
 
@@ -45,6 +46,7 @@ Talking-circle takes 4 images of a character's face (mouth closed, slightly open
 The skill can be used by an AI assistant (via OpenClaw) to:
 1. Generate a talking-circle video from existing audio and frame images.
 2. Generate speech from text via ElevenLabs TTS and produce the video in one step.
+3. Generate speech from text via SaluteSpeech (Sber) TTS — ideal for Russian language.
 
 ## How It Works
 
@@ -68,13 +70,24 @@ python3 scripts/make_talking_circle_video.py \
   --audio speech.mp3 --out /tmp/talking-circle.mp4
 ```
 
-### Text to Video
+### Text to Video (ElevenLabs)
 
 Requires `ELEVENLABS_API_KEY` environment variable.
 
 ```bash
 python3 scripts/make_text_to_video.py \
   --text "Hello world!" --voice-id YOUR_VOICE_ID \
+  --neutral neutral.png --slight slight.png --wide wide.png --blink blink.png \
+  --out /tmp/talking-circle.mp4
+```
+
+### Text to Video (SaluteSpeech / Sber)
+
+Requires `SALUTE_SPEECH_AUTH` environment variable (Base64-encoded `client_id:client_secret`).
+
+```bash
+python3 scripts/make_salute_text_to_video.py \
+  --text "Привет мир!" --voice Bys_24000 \
   --neutral neutral.png --slight slight.png --wide wide.png --blink blink.png \
   --out /tmp/talking-circle.mp4
 ```
@@ -143,7 +156,9 @@ The text-to-video mode uses [ElevenLabs](https://elevenlabs.io) by default. Read
 | `--style` | `0.38` |
 | `--speed` | `1.20` |
 
-**Don't have an ElevenLabs key?** Use any other TTS engine — OpenAI TTS, Whisper, Coqui, Piper, Silero, Google TTS, Amazon Polly — generate an audio file and pass it to the audio-to-video mode (`--audio`). No API key needed.
+**Also supported: [SaluteSpeech](https://developers.sber.ru/portal/products/smartspeech) (Sber)** — great for Russian. Voices: Nec (Natalia), Bys (Boris), May (Martha), Tur (Taras), Ost (Alexandra), Pon (Sergey), Kin (Kira, en-US). Use `make_salute_text_to_video.py`.
+
+**Don't have any API key?** Use any other TTS engine — OpenAI TTS, Whisper, Coqui, Piper, Silero — generate an audio file and pass it to the audio-to-video mode (`--audio`). No API key needed.
 
 ## Parameters
 
