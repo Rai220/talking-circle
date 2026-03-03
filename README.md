@@ -2,9 +2,9 @@
 
 An [OpenClaw](https://github.com/nicekrestnikov/openclaw) skill for creating animated talking-circle videos (Telegram-style round video messages) from avatar frame images and audio.
 
-| Rizzi | Sbercat |
-|-------|---------|
-| [examples/rizzi/example.mp4](examples/rizzi/example.mp4) | [examples/sbercat/example.mp4](examples/sbercat/example.mp4) |
+<p align="center">
+  <img src="examples/demo.gif" alt="Rizzi and Sbercat talking circles" width="480">
+</p>
 
 ## Quick Start
 
