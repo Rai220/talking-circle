@@ -20,6 +20,14 @@ The assistant will:
 3. Synthesize speech via ElevenLabs or SaluteSpeech (Sber) TTS.
 4. Render an animated talking-circle video and send it back.
 
+### Install from ClawHub
+
+```bash
+clawhub install talking-circle
+```
+
+Browse on ClawHub: [clawhub.ai/Rai220/talking-circle](https://clawhub.ai/Rai220/talking-circle)
+
 ### Manual installation
 
 ```bash

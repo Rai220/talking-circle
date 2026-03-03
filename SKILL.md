@@ -24,6 +24,12 @@ Create animated circular avatar videos with lip-sync and blink animations. Takes
 
 ## Setup
 
+Install from [ClawHub](https://clawhub.ai/Rai220/talking-circle):
+
+```bash
+clawhub install talking-circle
+```
+
 Dependencies are auto-installed into a temporary venv on first run. To install manually:
 
 ```bash
