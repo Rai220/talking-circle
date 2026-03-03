@@ -142,7 +142,11 @@ Anime-style AI assistant character.
 |-----------|--------|
 | <img src="examples/sbercat/reference.png" width="200"> | [example.mp4](examples/sbercat/example.mp4) |
 
-**Frame set:** not included — generate from reference using the [Image AI workflow](#generating-frames-with-image-ai).
+**Frame set:**
+
+| Neutral | Slight open | Wide open | Blink |
+|---------|-------------|-----------|-------|
+| <img src="examples/sbercat/neutral.png" width="150"> | <img src="examples/sbercat/slight.png" width="150"> | <img src="examples/sbercat/wide.png" width="150"> | <img src="examples/sbercat/blink.png" width="150"> |
 
 ## Parameters
 
