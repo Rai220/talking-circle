@@ -8,6 +8,9 @@ import uuid
 from pathlib import Path
 
 import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def run(cmd):
@@ -53,7 +56,7 @@ def synthesize_salute(token: str, text: str, voice: str, audio_format: str) -> b
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/text",
     }
-    r = requests.post(url, headers=headers, params=params, data=text.encode("utf-8"), timeout=90)
+    r = requests.post(url, headers=headers, params=params, data=text.encode("utf-8"), timeout=90, verify=False)
     if r.status_code == 401:
         raise SystemExit("SaluteSpeech auth failed (401). Check your SALUTE_SPEECH_AUTH key.")
     if r.status_code == 429:
